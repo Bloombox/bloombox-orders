@@ -1,0 +1,143 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="bloombox-orders">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      ul {
+        padding: 0 0 1em 0;
+        margin: 0;
+      }
+
+      .btn {
+        border: 0;
+        border-radius: 4px;
+        padding: 0.5em 0.75em;
+        color: #fff;
+        font-size: 1em;
+        float: right;
+      }
+
+      .btn.approve {
+        background: blue;
+
+      }
+
+      .btn.reject {
+        background: red;
+        margin-right: 1em;
+      }
+
+      .orders {
+        margin-bottom: 1em;
+        list-style: none;
+        border-top: 2px solid #ccc;
+        padding-top: 0.5em;
+      }
+
+      .orders li {
+       border-bottom: 2px solid #ccc;
+       margin-bottom: 0.5em;
+       padding-bottom: 0.5em;
+       text-align: center;
+     }
+
+     :host h2 {
+      text-align: center;
+    }
+  </style>
+  <h2>Order #[[data.id]]</h2>
+  <div><strong>Name:</strong> [[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
+  <div><strong>Email:</strong> [[data.customer.email]]</div>
+  <div><strong>Status:</strong> {{_capitalize(data.status)}}</div>
+  <div><strong>Type:</strong> [[_capitalize(data.type)]]</div>
+  <div><strong>Schedule: </strong> [[_getSchedule(data)]]</div>
+
+  <br><br>
+ 
+  <template is="dom-if" if="[[_isDelivery(data.type)]]">
+    <div><strong>Delivery Location:</strong></div>
+    <div>[[data.destination.firstLine]] [[data.destination.secondLine]]</div>
+    <div>[[data.destination.city]], [[data.destination.state]] [[data.destination.zipcode]]</div>
+  </template>
+  <h2>Items:</h2>
+
+  <ul class="orders">
+    <template is="dom-repeat" items="[[data.productsInOrder]]">
+      <li><strong>[[_getItemCount(index)]]x [[_getVariant(index, 'weight')]]</strong> [[item.name]]</li>
+    </template>
+  </ul>
+
+  <button class="btn approve" on-tap="_approveOrder">
+    Approve
+  </button>
+
+  <button class="btn reject" on-tap="_rejectOrder">
+   Reject
+ </button>
+
+</template>
+
+<script>
+    /**
+     * `bloombox-orders`
+     * Orders view container
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+     var BloomboxOrders = Polymer.BloomboxOrders = Polymer({
+      is: "bloombox-orders",
+      properties: {
+        data: {
+          type: Object,
+          notify: true,
+          observer: '_viewBinded'
+        }
+      },
+      _approveOrder: function() {
+        console.log('approving order')
+        this.data.status = 'APPROVED'
+        this._updateFbValues()
+      },
+      _rejectOrder: function() {
+        console.log('rejecting order')
+        this.data.status = 'REJECTED'
+        this._updateFbValues()
+      },
+      _updateFbValues: function() {
+        // DONT FORGET TO FUCKING FIX THIS
+        var db = firebase.database().ref(this.endpoint + '/locations/' + this.location + '/orders/' + this.data.itemKey + '/status')
+        db.set(this.data.status)
+        this.set('data.status', this.data.status)
+      },
+      _getSchedule(data) {
+        if(data.scheduling.scheduling === "ASAP") {
+          return "ASAP";
+        } else {
+          return new Date(data.createdAt.time * 1000);
+        }
+      },
+      _isDelivery: function(type) {
+        return type === "DELIVERY"
+      },
+      _getVariant: function(index, property) {
+        var self = this;
+        return self._capitalize(self.data.items[index].variant[0][property])
+      },
+      _capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+      },
+      _getItemCount: function(index) {
+        return this.data.items[index].count
+      },
+      _viewBinded: function() {
+        console.log(this.data)
+      }
+    });
+  </script>
+</dom-module>

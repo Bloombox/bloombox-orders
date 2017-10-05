@@ -46,11 +46,13 @@
      }
 
      :host h2 {
+      font-size: 1.1em;
       text-align: center;
     }
   </style>
-  <h2>Order #[[data.id]]</h2>
+  <h2>Customer #[[data.customer.foreignId]]</h2>
   <div><strong>Name:</strong> [[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
+  <div><strong>Phone:</strong> [[data.customer.phone]]</div>
   <div><strong>Email:</strong> [[data.customer.email]]</div>
   <div><strong>Status:</strong> {{_capitalize(data.status)}}</div>
   <div><strong>Type:</strong> [[_capitalize(data.type)]]</div>
@@ -111,7 +113,7 @@
       },
       _updateFbValues: function() {
         // DONT FORGET TO FUCKING FIX THIS
-        var db = firebase.database().ref(this.endpoint + '/locations/' + this.location + '/orders/' + this.data.itemKey + '/status')
+        var db = firebase.database().ref(this.endpoint + '/locations/' + this.location + '/orders/' + this.data.orderKey + '/status')
         db.set(this.data.status)
         this.set('data.status', this.data.status)
       },

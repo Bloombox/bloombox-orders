@@ -25,6 +25,7 @@
         cursor: pointer;
       }
       .table-row > div {
+        font-size: 13px;
         width: 25%;
       }
     </style>
@@ -53,7 +54,8 @@
      * @polymer
      * @demo demo/index.html
      */
-     var BloomboxOrderListItem = Polymer.BloomboxOrderListItem = Polymer({
+    window.trackOrders = 0;
+    var BloomboxOrderListItem = Polymer.BloomboxOrderListItem = Polymer({
       is: "bloombox-order-list-item",
       properties: {
         data: {
@@ -63,7 +65,12 @@
         }
       },
       _viewBinded: function(data) {
-        console.log(data)
+        window.trackOrders++;
+        if(window.trackOrders === 1) {
+          setTimeout(function(){
+            this.click()
+          }.bind(this))
+        }
       },
       _computeOrderStatus: function(status) {
         return status === "PENDING"

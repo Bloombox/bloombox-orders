@@ -1,0 +1,79 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="bloombox-order-list-item">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .table-row {
+        border-bottom: 1px solid #999;
+        margin-bottom: 0; 
+        padding: 1em;
+      }
+      .table-head > div {
+        font-weight: 800;
+      }
+      .table-row {
+        display: flex;
+        flex-wrap: row;
+      }
+      .table-row.active {
+        background: lightgoldenrodyellow;
+      }
+      .table-row:hover {
+        cursor: pointer;
+      }
+      .table-row > div {
+        width: 25%;
+      }
+    </style>
+    <div class="table-row" id="[[data.orderKey]]">
+      <div>
+        <template is="dom-if" if="[[_computeOrderStatus(data.status)]]">
+          <strong>NEW</strong>
+        </template>
+        <template is="dom-if" if="[[!_computeOrderStatus(data.status)]]">
+          [[_capitalize(data.status)]]
+        </template>
+      </div>
+      <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
+      <div>[[data.customer.foreignId]]</div>
+      <div><moment-js date="[[_timestamp(data.createdAt.time)]]" calendar-time="true"></moment-js></div>
+    </div>
+
+  </template>
+
+  <script>
+    /**
+     * `bloombox-order-list-item`
+     * Orders view container
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+     var BloomboxOrderListItem = Polymer.BloomboxOrderListItem = Polymer({
+      is: "bloombox-order-list-item",
+      properties: {
+        data: {
+          type: Object,
+          notify: true,
+          observer: '_viewBinded'
+        }
+      },
+      _viewBinded: function(data) {
+        console.log(data)
+      },
+      _computeOrderStatus: function(status) {
+        return status === "PENDING"
+      },
+      _capitalize: function(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+      },
+      _timestamp: function(iso) {
+        return new Date(iso);
+      },
+  });
+</script>
+</dom-module>

@@ -4,6 +4,7 @@
   "description": "Order list for shop application.",
   "main": "bloombox-orders.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.0.0"
+    "polymer": "Polymer/polymer#^1.0.0",
+    "moment": "git@github.com:moment/moment#master"
   }
 }

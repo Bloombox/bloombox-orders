@@ -5,6 +5,7 @@
   "main": "bloombox-orders.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.0.0",
-    "moment": "git@github.com:moment/moment#master"
+    "moment": "git@github.com:moment/moment#^2.2.1",
+    "moment-js": "git@github.com:saeidzebardast/moment-js"
   }
 }

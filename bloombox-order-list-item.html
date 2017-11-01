@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../moment-js/moment-js.html">
 
 
 <dom-module id="bloombox-order-list-item">
@@ -41,7 +42,7 @@
       </div>
       <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
       <div>[[data.customer.foreignId]]</div>
-      <div><moment-js date="[[_timestamp(data.createdAt.time)]]" calendar-time="true"></moment-js></div>
+      <div><moment-js date="[[_timestamp(data.createdAt.time)]]" calendar-time></moment-js></div>
     </div>
 
   </template>

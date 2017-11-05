@@ -1,32 +1,30 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../moment-js/moment-js.html">
 
-
 <dom-module id="bloombox-order-list-item">
-  <template>
-    <style>
+  <template strip-whitespace>
+    <style is="custom-style" include="bloombox-styles">
       :host {
         display: block;
       }
-      .table-row {
+      :host .table-row {
         border-bottom: 1px solid #999;
         margin-bottom: 0; 
         padding: 1em;
       }
-      .table-head > div {
+      :host .table-head > div {
         font-weight: 800;
       }
-      .table-row {
+      :host .table-row {
         display: flex;
-        flex-wrap: row;
       }
-      .table-row.active {
+      :host .table-row.active {
         background: lightgoldenrodyellow;
       }
-      .table-row:hover {
+      :host .table-row:hover {
         cursor: pointer;
       }
-      .table-row > div {
+      :host .table-row > div {
         font-size: 13px;
         width: 25%;
       }

@@ -130,7 +130,8 @@
       },
       _getVariant: function(index, property) {
         var self = this;
-        return self._capitalize(self.data.items[index].variant[0][property])
+        if(self.data.items[index].variant[0][property] !== 'NO_WEIGHT')
+          return self._capitalize(self.data.items[index].variant[0][property])
       },
       _capitalize(text) {
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();

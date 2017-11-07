@@ -33,6 +33,7 @@
       }
       :host .table-row.active {
         box-shadow: inset 0 0 0 2px black;
+        font-weight: bold;
         border: 0;
       }
       :host .table-row:hover {
@@ -44,13 +45,7 @@
       }
     </style>
     <div class="table-row" id="[[data.orderKey]]" style$="background-color: [[_statusColor(data.status)]]">
-      <div>
-        <template is="dom-if" if="[[_computeOrderStatus(data.status)]]">
-          <strong>NEW</strong>
-        </template>
-        <template is="dom-if" if="[[!_computeOrderStatus(data.status)]]">
-          [[_capitalize(data.status)]]
-        </template>
+      <div>[[_capitalize(data.status)]]
       </div>
       <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
       <div>[[data.customer.foreignId]]</div>

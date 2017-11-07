@@ -9,7 +9,7 @@
       }
       :host .table-row {
         margin-bottom: 0; 
-        padding: 16px;
+        padding: 1em 1em 1em 3em;
         position: relative;
       }
       :host .table-row:after {
@@ -41,14 +41,24 @@
       }
       :host .table-row > div {
         font-size: 13px;
-        width: 25%;
+      }
+      :host .table-row > div:nth-child(1) {
+        width: 20%;
+      }
+      :host .table-row > div:nth-child(2) {
+        width: 30%;
+      }
+      :host .table-row > div:nth-child(3) {
+        width: 22%;
+      }
+      :host .table-row > div:nth-child(4) {
+        width: 28%;
       }
     </style>
     <div class="table-row" id="[[data.orderKey]]" style$="background-color: [[_statusColor(data.status)]]">
-      <div>[[_capitalize(data.status)]]
-      </div>
+      <div>[[_capitalize(data.status)]]</div>
       <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
-      <div>[[data.customer.foreignId]]</div>
+      <div>[[_capitalize(data.type)]]</div>
       <div><moment-js date="[[_timestamp(data.createdAt.time)]]" calendar-time></moment-js></div>
     </div>
 

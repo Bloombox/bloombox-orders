@@ -8,6 +8,10 @@
         display: block;
       }
 
+      :host a {
+        text-decoration: none;
+      }
+
       ul {
         padding: 0 0 1em 0;
         margin: 0;
@@ -32,6 +36,16 @@
         margin-right: 1em;
       }
 
+      h2.text-title {
+        margin-bottom: 1em;
+      }
+
+      .text-title {
+        font-size: 1.2em;
+        margin-bottom: 0.2em;
+        text-decoration: underline;
+      }
+
       .orders {
         margin-bottom: 1em;
         list-style: none;
@@ -51,18 +65,24 @@
       text-align: center;
     }
   </style>
-  <h2>Customer #[[data.customer.foreignId]]</h2>
-  <div><strong>Name:</strong> [[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
-  <div><strong>Phone:</strong> [[data.customer.phone]]</div>
-  <div><strong>Email:</strong> [[data.customer.email]]</div>
+  <h2 class="text-title">Order [[data.orderKey]]</h2>
+  <div class="text-title"><strong>Customer Information</strong></div>
+  <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
+  <div><a href="tel:[[data.customer.phone]]">[[_phoneFormatter(data.customer.phone)]]</a></div>
+  <div><a href="mailto:[[data.customer.email]]">[[data.customer.email]]</a></div>
+  <div>Rec ID: [[data.customer.foreignId]]</div>
+
+  <br>
+
+  <div class="text-title"><strong>Order Details</strong></div>
   <div><strong>Status:</strong> {{_capitalize(data.status)}}</div>
   <div><strong>Type:</strong> [[_capitalize(data.type)]]</div>
   <div><strong>Schedule: </strong> [[_getSchedule(data)]]</div>
 
-  <br><br>
+  <br>
  
   <template is="dom-if" if="[[_isDelivery(data.type)]]">
-    <div><strong>Delivery Location:</strong></div>
+    <div class="text-title"><strong>Delivery Location:</strong></div>
     <div>[[data.destination.firstLine]] [[data.destination.secondLine]]</div>
     <div>[[data.destination.city]], [[data.destination.state]] [[data.destination.zipcode]]</div>
   </template>
@@ -139,6 +159,9 @@
       _getItemCount: function(index) {
         return this.data.items[index].count
       },
+      _phoneFormatter: function(s) {
+        return s.slice(0, 2) + ' (' + s.slice(2, 5) + ') ' + s.slice(5, 8) + '-' + s.slice(8, 12);
+      },  
       _viewBinded: function() {
 
       }

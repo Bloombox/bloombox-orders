@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
 
 
 <dom-module id="bloombox-orders">
@@ -6,6 +7,17 @@
     <style>
       :host {
         display: block;
+        color: #757575;
+      }
+
+      :host .card {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        padding: 24px 24px 40px 24px;
+        margin: 24px 0;
+        border-radius: 5px;
+        background-color: #fff;
+        color: #757575;
+        position: relative;
       }
 
       :host > div {
@@ -72,49 +84,116 @@
       font-size: 1.1em;
       text-align: center;
     }
+
+    h2.text-title.order-key {
+      margin-top: 2.4em;
+    }
+
+    .card-icon {
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      border-radius: 50%;
+      color: #fff;
+      position: absolute;
+      bottom: 16px;
+    }
+    .card-icon.first {
+      right: 66px;
+    }
+    .card-icon.second {
+      right: 20px;
+    }
+    #denyBtn {
+      background: red;
+      
+    }
+    #approveBtn {
+      background: lightgreen;
+      
+    }
+    .static-status {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+    }
+    .status-approved,
+    .status-rejected,
+    .status-pending {
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 3px;
+      width: 16px;
+      height: 16px;
+      top: 2px;
+      position: relative;
+    }
+
+    .status-pending {
+      background: #888;
+    }
+
+    .status-approved {
+      background: lightgreen;
+    }
+
+    .status-rejected {
+      background: red;
+    }
   </style>
-  <h2 class="text-title">Order [[data.orderKey]]</h2>
-  <div class="text-title"><strong>Customer Information</strong></div>
-  <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
-  <div><a href="tel:[[data.customer.phone]]">[[_phoneFormatter(data.customer.phone)]]</a></div>
-  <div><a href="mailto:[[data.customer.email]]">[[data.customer.email]]</a></div>
-  <div>Rec ID: [[data.customer.foreignId]]</div>
+  <h2 class="text-title order-key">Order [[data.orderKey]]</h2>
+  <div class="card">
+    <!-- Bottom Bar: Approve / Reject + Status -->
+    <div class="static-status">
+      <template is="dom-if" if="[[_checkStatus(data.status, 'Approved')]]">
+        <div class="status-approved"></div>
+      </template>
+      <template is="dom-if" if="[[_checkStatus(data.status, 'Rejected')]]">
+        <div class="status-rejected"></div>
+      </template>
 
-  <br>
+      <template is="dom-if" if="[[_checkStatus(data.status, 'Pending')]]">
+        <div class="status-pending"></div>
+      </template>
+      <strong>{{_capitalize(data.status)}}</strong>
+    </div>
 
-  <div class="text-title"><strong>Order Details</strong></div>
-  <div><strong>Status:</strong> {{_capitalize(data.status)}}</div>
-  <div><strong>Type:</strong> [[_capitalize(data.type)]]</div>
-  <div><strong>Schedule: </strong> [[_getSchedule(data)]]</div>
+    <paper-icon-button id="approveBtn" class="card-icon first" on-tap="_approveOrder" icon="check"></paper-icon-button>
+    <paper-icon-button id="denyBtn" class="card-icon second" on-tap="_rejectOrder" icon="block"></paper-icon-button>
+  
+    <!-- Begin Detail View -->
+    <div class="text-title"><strong>Customer Information</strong></div>
+    <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
+    <div><a href="tel:[[data.customer.phone]]">[[_phoneFormatter(data.customer.phone)]]</a></div>
+    <div><a href="mailto:[[data.customer.email]]">[[data.customer.email]]</a></div>
+    <div>Rec ID: [[data.customer.foreignId]]</div>
 
-  <br>
- 
-  <template is="dom-if" if="[[_isDelivery(data.type)]]">
-    <div class="text-title"><strong>Delivery Location:</strong></div>
-    <div>[[data.destination.firstLine]] [[data.destination.secondLine]]</div>
-    <div>[[data.destination.city]], [[data.destination.state]] [[data.destination.zipcode]]</div>
+    <br>
 
-    <template is="dom-if" if="[[_exists(data.destination.deliveryInstructions)]]">
-      <br>
-      <div class="text-title"><strong>Instructions:</strong></div>
-      <div class="instructions">{{data.destination.deliveryInstructions}}</div>
+    <div class="text-title"><strong>Order Details</strong></div>
+    <div><strong>Type:</strong> [[_capitalize(data.type)]]</div>
+    <div><strong>Schedule: </strong> [[_getSchedule(data)]]</div>
+
+    <br>
+   
+    <template is="dom-if" if="[[_isDelivery(data.type)]]">
+      <div class="text-title"><strong>Delivery Location:</strong></div>
+      <div>[[data.destination.firstLine]] [[data.destination.secondLine]]</div>
+      <div>[[data.destination.city]], [[data.destination.state]] [[data.destination.zipcode]]</div>
+
+      <template is="dom-if" if="[[_exists(data.destination.deliveryInstructions)]]">
+        <br>
+        <div class="text-title"><strong>Instructions:</strong></div>
+        <div class="instructions">{{data.destination.deliveryInstructions}}</div>
+        <br>
+      </template>
     </template>
-  </template>
-  <h2>Items:</h2>
+    <h2>Items:</h2>
 
-  <ul class="orders">
-    <template is="dom-repeat" items="[[data.productsInOrder]]">
-      <li><strong>[[_getItemCount(index)]]x [[_getVariant(index, 'weight')]]</strong> [[item.name]]</li>
-    </template>
-  </ul>
-
-  <button class="btn approve" on-tap="_approveOrder">
-    Approve
-  </button>
-
-  <button class="btn reject" on-tap="_rejectOrder">
-   Reject
- </button>
+    <ul class="orders">
+      <template is="dom-repeat" items="[[data.productsInOrder]]">
+        <li><strong>[[_getItemCount(index)]]x [[_getVariant(index, 'weight')]]</strong> [[item.name]]</li>
+      </template>
+    </ul>
+  </div>
 
 </template>
 
@@ -161,6 +240,9 @@
         } else {
           return new Date(data.createdAt.time * 1000);
         }
+      },
+      _checkStatus: function(status, check) {
+        return status.toLowerCase() === check.toLowerCase();
       },
       _isDelivery: function(type) {
         return type === "DELIVERY"

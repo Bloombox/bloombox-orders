@@ -8,6 +8,10 @@
         display: block;
       }
 
+      :host > div {
+        margin-bottom: -5px;
+      }
+
       :host a {
         text-decoration: none;
       }
@@ -60,6 +64,10 @@
        text-align: center;
      }
 
+     .instructions {
+      line-height: 1.3;
+     }
+
      :host h2 {
       font-size: 1.1em;
       text-align: center;
@@ -85,6 +93,12 @@
     <div class="text-title"><strong>Delivery Location:</strong></div>
     <div>[[data.destination.firstLine]] [[data.destination.secondLine]]</div>
     <div>[[data.destination.city]], [[data.destination.state]] [[data.destination.zipcode]]</div>
+
+    <template is="dom-if" if="[[_exists(data.destination.deliveryInstructions)]]">
+      <br>
+      <div class="text-title"><strong>Instructions:</strong></div>
+      <div class="instructions">{{data.destination.deliveryInstructions}}</div>
+    </template>
   </template>
   <h2>Items:</h2>
 
@@ -137,6 +151,9 @@
         var db = firebase.database().ref(this.endpoint + '/locations/' + this.location + '/orders/' + this.data.orderKey + '/status')
         db.set(this.data.status)
         this.set('data.status', this.data.status)
+      },
+      _exists: function(check) {
+        return check !== "";
       },
       _getSchedule(data) {
         if(data.scheduling.scheduling === "ASAP") {

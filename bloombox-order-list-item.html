@@ -55,7 +55,7 @@
         width: 28%;
       }
     </style>
-    <div class="table-row" id="[[data.orderKey]]" style$="background-color: [[_statusColor(data.status)]]">
+    <div class="table-row" style$="background-color: [[_statusColor(data.status)]]">
       <div>[[_capitalize(data.status)]]</div>
       <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
       <div>[[_capitalize(data.type)]]</div>
@@ -95,7 +95,11 @@
         return status === "PENDING"
       },
       _capitalize: function(text) {
-        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+        if(typeof text !== 'undefined') {
+          return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+        } else {
+          return false;
+        }
       },
       _statusColor: function(status) {
         // Check order status and apply appropriate row highlighting

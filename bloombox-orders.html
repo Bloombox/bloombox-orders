@@ -143,16 +143,7 @@
   <div class="card">
     <!-- Bottom Bar: Approve / Reject + Status -->
     <div class="static-status">
-      <template is="dom-if" if="[[_checkStatus(data.status, 'Approved')]]">
-        <div class="status-approved"></div>
-      </template>
-      <template is="dom-if" if="[[_checkStatus(data.status, 'Rejected')]]">
-        <div class="status-rejected"></div>
-      </template>
-
-      <template is="dom-if" if="[[_checkStatus(data.status, 'Pending')]]">
-        <div class="status-pending"></div>
-      </template>
+      <div class$="[[_checkStatus(data)]]"></div>
       <strong>{{_capitalize(data.status)}}</strong>
     </div>
 
@@ -161,31 +152,41 @@
   
     <!-- Begin Detail View -->
     <div class="text-title"><strong>Customer Information</strong></div>
-    <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
-    <div><a href="tel:[[data.customer.phone]]">[[_phoneFormatter(data.customer.phone)]]</a></div>
-    <div><a href="mailto:[[data.customer.email]]">[[data.customer.email]]</a></div>
+    <div>[[data.customer.person.name.firstName]] [[data.customer.person.name.lastName]]</div>
+    <div><a href="tel:[[data.customer.person.contact.phone.e164]]">[[_phoneFormatter(data.customer.person.contact.phone.e164)]]</a></div>
+    <div><a href="mailto:[[data.customer.person.contact.email.address]]">[[data.customer.person.contact.email.address]]</a></div>
     <div>Rec ID: [[data.customer.foreignId]]</div>
 
     <br>
 
     <div class="text-title"><strong>Order Details</strong></div>
-    <div><strong>Type:</strong> [[_capitalize(data.type)]]</div>
+    <div><strong>Type:</strong> [[_capitalize(data.type, "PICKUP")]]</div>
     <div><strong>Schedule: </strong> [[_getSchedule(data)]]</div>
 
     <br>
    
+    <template is="dom-if" if="[[_exists(data.notes)]]">
+      <br>
+      <div class="text-title"><strong>Order Notes:</strong></div>
+      <div class="instructions">{{data.notes}}</div>
+      <br>
+    </template>
+
+    <br>
+
     <template is="dom-if" if="[[_isDelivery(data.type)]]">
       <div class="text-title"><strong>Delivery Location:</strong></div>
-      <div>[[data.destination.firstLine]] [[data.destination.secondLine]]</div>
-      <div>[[data.destination.city]], [[data.destination.state]] [[data.destination.zipcode]]</div>
+      <div>[[data.destination.address.firstLine]] [[data.destination.address.secondLine]]</div>
+      <div>[[data.destination.address.city]], [[data.destination.address.state]] [[data.destination.address.zipcode]]</div>
 
-      <template is="dom-if" if="[[_exists(data.destination.deliveryInstructions)]]">
+      <template is="dom-if" if="[[_exists(data.destination.instructions)]]">
         <br>
-        <div class="text-title"><strong>Instructions:</strong></div>
-        <div class="instructions">{{data.destination.deliveryInstructions}}</div>
+        <div class="text-title"><strong>Delivery Instructions:</strong></div>
+        <div class="instructions">{{data.destination.instructions}}</div>
         <br>
       </template>
     </template>
+
     <h2>Items:</h2>
 
     <ul class="orders">
@@ -235,31 +236,38 @@
         return check !== "";
       },
       _getSchedule(data) {
-        if(data.scheduling.scheduling === "ASAP") {
+        if(!data || !data.scheduling || data.scheduling.scheduling === "ASAP") {
+          // default is ASAP
           return "ASAP";
         } else {
           return new Date(data.createdAt.time * 1000);
         }
       },
-      _checkStatus: function(status, check) {
-        return status.toLowerCase() === check.toLowerCase();
+      _checkStatus: function(data, check) {
+        let current = (data ? data.status : "PENDING");
+        return 'status-' + current.toLowerCase();
       },
       _isDelivery: function(type) {
         return type === "DELIVERY"
       },
       _getVariant: function(index, property) {
         var self = this;
-        if(self.data.items[index].variant[0][property] !== 'NO_WEIGHT')
-          return self._capitalize(self.data.items[index].variant[0][property])
+        if(self.data.item[index].variant[0][property] !== 'NO_WEIGHT')
+          return self._capitalize(self.data.item[index].variant[0][property])
       },
-      _capitalize(text) {
-        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+      _capitalize(text, defaultText) {
+        if (!text && !defaultText)
+          return "";
+        let target = text || defaultText;
+        return target.charAt(0).toUpperCase() + target.slice(1).toLowerCase();
       },
       _getItemCount: function(index) {
-        return this.data.items[index].count
+        return this.data.item[index].count
       },
       _phoneFormatter: function(s) {
-        return s.slice(0, 2) + ' (' + s.slice(2, 5) + ') ' + s.slice(5, 8) + '-' + s.slice(8, 12);
+        if (s)
+          return s.slice(0, 2) + ' (' + s.slice(2, 5) + ') ' + s.slice(5, 8) + '-' + s.slice(8, 12);
+        return "";
       },  
       _viewBinded: function() {
 

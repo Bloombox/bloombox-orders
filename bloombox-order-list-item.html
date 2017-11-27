@@ -54,10 +54,10 @@
       }
     </style>
     <div class="table-row" style$="background-color: [[_statusColor(data.status)]]">
-      <div>[[_capitalize(data.status)]]</div>
-      <div>[[data.customer.name.firstName]] [[data.customer.name.lastName]]</div>
-      <div>[[_capitalize(data.type)]]</div>
-      <div><moment-js date="[[_timestamp(data.createdAt.time)]]" calendar-time></moment-js></div>
+      <div>[[_capitalize(data, "status", "PENDING")]]</div>
+      <div>[[data.customer.person.name.firstName]] [[data.customer.person.name.lastName]]</div>
+      <div>[[_capitalize(data, "type", "PICKUP")]]</div>
+      <div><moment-js date="[[_timestamp(data.createdAt.timestamp)]]" calendar-time></moment-js></div>
     </div>
 
   </template>
@@ -92,15 +92,13 @@
       _computeOrderStatus: function(status) {
         return status === "PENDING"
       },
-      _capitalize: function(text) {
-        if(typeof text !== 'undefined') {
-          return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-        } else {
-          return false;
-        }
+      _capitalize: function(data, prop, defaultText) {
+        let target = (data && data[prop]) || defaultText;
+        return target.charAt(0).toUpperCase() + target.slice(1).toLowerCase();
       },
-      _statusColor: function(status) {
+      _statusColor: function(statusData) {
         // Check order status and apply appropriate row highlighting
+        let status = statusData || "PENDING";
         switch(status) {
           case 'APPROVED':
             return '#c7deff';

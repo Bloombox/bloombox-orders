@@ -1,6 +1,6 @@
 {
   "name": "bloombox-orders",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Provides elements that manage pickup and delivery orders.",
   "main": "index.html",
   "repository": {

@@ -1,6 +1,6 @@
 {
   "name": "bloombox-orders",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Order list for shop application.",
   "main": "bloombox-orders.html",
   "dependencies": {

@@ -191,7 +191,7 @@
 
     <ul class="orders">
       <template is="dom-repeat" items="[[data.productsInOrder]]">
-        <li><strong>[[_getItemCount(index)]]x [[_getVariant(index, 'weight')]]</strong> [[item.name]]</li>
+        <li><strong>[[_getItemCount(index)]]x [[_getVariant(index, 'weight')]]</strong> [[_getItemName(index)]]</li>
       </template>
     </ul>
   </div>
@@ -233,7 +233,7 @@
         this.set('data.status', this.data.status)
       },
       _exists: function(check) {
-        return check !== "";
+        return check && check !== "";
       },
       _getSchedule(data) {
         if(!data || !data.scheduling || data.scheduling.scheduling === "ASAP") {
@@ -252,18 +252,24 @@
       },
       _getVariant: function(index, property) {
         var self = this;
-        if(self.data && self.data.item[index]&& self.data.item[index].variant &&
+        if(self.data && self.data.item[index] && self.data.item[index].variant &&
            self.data.item[index].variant[0][property] !== 'NO_WEIGHT')
           return self._capitalize(self.data.item[index].variant[0][property])
+        return '';
       },
       _capitalize(text, defaultText) {
         if (!text && !defaultText)
           return "";
+        if (text.indexOf("_") !== -1)
+          text = text.replace(/_/g, " ");
         let target = text || defaultText;
         return target.charAt(0).toUpperCase() + target.slice(1).toLowerCase();
       },
       _getItemCount: function(index) {
         return this.data.item[index].count
+      },
+      _getItemName: function(index) {
+        return this.data.item[index].name;
       },
       _phoneFormatter: function(s) {
         if (s)
@@ -271,7 +277,6 @@
         return "";
       },  
       _viewBinded: function() {
-
       }
     });
   </script>
